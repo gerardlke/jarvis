@@ -1,0 +1,13 @@
+# Datasets
+datasets/*
+
+# Models
+models
+*.pt
+
+# Training
+runs
+
+# Environments
+venv
+*.env
