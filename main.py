@@ -1,4 +1,6 @@
+import asyncio
 from src import Pipeline
 
-pipeline = Pipeline()
-pipeline.main()
+if __name__ == '__main__':
+    pipeline = Pipeline()
+    asyncio.run(pipeline.run())
