@@ -3,6 +3,7 @@ datasets/*
 models/*
 *.mp4
 *.pt
+*.joblib
 
 # Training
 runs/

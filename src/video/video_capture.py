@@ -7,14 +7,13 @@ class VideoCapture:
         self.frame_height = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
         self.frame_name = "Camera"
 
-        fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        self.out = cv2.VideoWriter("output.mp4", fourcc, 20.0, (self.frame_width, self.frame_height))
-
     def read(self):
-        return self.cam.read()
+        ret, frame = self.cam.read()
+        frame = cv2.flip(frame, 1)
+        return frame
     
     def show(self, frame):
-        cv2.imshow(self.frame_name, cv2.flip(frame, 1))
+        cv2.imshow(self.frame_name, frame)
 
     def write(self, frame):
         self.out.write(frame)
@@ -36,12 +35,11 @@ class VideoCapture:
                 pt2 = tuple(map(int, keypoints[end]))
                 cv2.line(frame, pt1, pt2, (255, 255, 255), 2)
 
-        # Draw Points on top
         for kp in keypoints:
             cv2.circle(frame, (int(kp[0]), int(kp[1])), 4, (0, 0, 255), -1)
 
-    def process_gesture(self, results):
-        return
+    def overlay_text(self, frame, text, location=(0, 0)):
+        cv2.putText(frame, text, location, cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 255), 2, cv2.LINE_AA)
 
     def stop(self):
         key_pressed = cv2.waitKey(1) & 0xFF == ord("q")
