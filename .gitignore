@@ -1,13 +1,16 @@
-# Datasets
+# Large files
 datasets/*
-
-# Models
-models
+models/*
+*.mp4
 *.pt
 
 # Training
-runs
+runs/
 
 # Environments
 venv
 *.env
+
+# Caches
+__pycache__/
+*.py[cod]
