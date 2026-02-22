@@ -10,11 +10,17 @@ from .audio.audio_capture import AudioCapture
 from .audio.audio_detector import AudioDetector
 from .audio.speech_buffer import SpeechBuffer
 
+from .brain.schemas.logger import Logger
+from .brain.controller import Controller
+
 from .event_manager import EventManager
 
+
 class Pipeline:
+    Logger.setup()
+
     def __init__(self):
-        print("Initialising pipeline...")
+        Logger.info("Pipeline", "Initialising pipeline...")
         # Start video capture tools
         self.vid = VideoCapture()
         self.display = Display(self.vid.frame_width, self.vid.frame_height)
@@ -27,13 +33,16 @@ class Pipeline:
         self.speech_buffer = SpeechBuffer()
         self.sr_model = SRModel("small.en")
 
-        # Start event manager
+        # Start main controllers
         self.events = EventManager()
+        self.controller = Controller()
 
         self.running = True
-        print("Pipeline started.")
+        Logger.info("Pipeline", "Pipeline started.")
+
 
     async def video_loop(self):
+        Logger.info("Pipeline", "Video loop started.")
         while self.running:
             frame = await asyncio.to_thread(self.vid.read)
 
@@ -44,7 +53,7 @@ class Pipeline:
             processed_results = self.cv_model.process_results(results)
             keypoints = [result.get("keypoints", None) for result in processed_results]
             confidence, gesture = self.gesture.detect_gesture(keypoints[0])
-            await self.events.update_gesture(gesture if gesture else None, confidence if gesture else None)
+            await self.events.update_gesture(gesture if gesture else None, confidence if gesture else 0.0)
 
             # Update window based on states
             state = await self.events.get_state()
@@ -59,7 +68,9 @@ class Pipeline:
 
             await asyncio.sleep(0)
     
+
     async def audio_loop(self):
+        Logger.info("Pipeline", "Audio loop started.")
         while self.running:
             audio = await asyncio.to_thread(self.audio_capture.read)
 
@@ -78,8 +89,21 @@ class Pipeline:
             
             await asyncio.sleep(0)
 
+    async def action_loop(self):
+        Logger.info("Pipeline", "Action loop started.")
+        while self.running:
+            state = await self.events.get_state()
+            command, gesture = state.last_command, state.last_gesture
+
+            response = await asyncio.to_thread(self.controller.run, (command, gesture))
+
+            await self.events.update_response(response)
+
+            await asyncio.sleep(0)
+
     async def run(self):
         await asyncio.gather(
             self.video_loop(),
-            self.audio_loop()
+            self.audio_loop(),
+            self.action_loop()
         )
