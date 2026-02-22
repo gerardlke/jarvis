@@ -7,6 +7,17 @@ class CVModel:
     def predict(self, src):
         return self.model(src, verbose=False)
     
+    def process_results(self, results):
+        res = []
+        for result in results:
+            box = self.extract_bbox(result)
+            keypoints = self.extract_keypoints(result)
+            res.append({
+                "bbox": box,
+                "keypoints": keypoints
+            })
+        return res
+    
     def extract_bbox(self, result):
         if len(result.boxes.xyxy) == 0:
             return ()

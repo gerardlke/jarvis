@@ -1,7 +1,8 @@
 import asyncio
 
-from .video.cv_model import CVModel
+from .video.display import Display
 from .video.gesture import Gesture
+from .video.cv_model import CVModel
 from .video.video_capture import VideoCapture
 
 from .audio.sr_model import SRModel
@@ -16,6 +17,7 @@ class Pipeline:
         print("Initialising pipeline...")
         # Start video capture tools
         self.vid = VideoCapture()
+        self.display = Display(self.vid.frame_width, self.vid.frame_height)
         self.cv_model = CVModel(r"models\runs\pose\hand-keypoints\weights\best.pt")
         self.gesture = Gesture(r"models\runs\knn\knn.joblib", r"models\runs\knn\scaler.joblib")
 
@@ -39,19 +41,15 @@ class Pipeline:
             results = self.cv_model.predict(frame)
 
             # Using keypoints to detect gesture
-            _, keypoints = self.process_video(frame, results)
-            confidence, gesture = self.gesture.detect_gesture(keypoints)
-            if gesture:
-                await self.events.update_gesture(gesture)
+            processed_results = self.cv_model.process_results(results)
+            keypoints = [result.get("keypoints", None) for result in processed_results]
+            confidence, gesture = self.gesture.detect_gesture(keypoints[0])
+            await self.events.update_gesture(gesture if gesture else None, confidence if gesture else None)
 
             # Update window based on states
             state = await self.events.get_state()
-            self.vid.overlay_text(frame, state.mode, (50, 50))
-            if state.last_command:
-                self.vid.overlay_text(frame, state.last_command, (50, 100))
-            if state.last_gesture:
-                self.vid.overlay_text(frame, state.last_gesture, (50, 150))
-
+            frame = self.display.render(frame, state, processed_results)
+            
             # Display window
             self.vid.show(frame)
             await asyncio.to_thread(self.vid.show, frame)
@@ -60,19 +58,6 @@ class Pipeline:
                 self.running = False
 
             await asyncio.sleep(0)
-    
-    def process_video(self, frame, results):
-        # Extracts bbox and keypoints from results (but currently only takes last)
-        for result in results:
-            box = self.cv_model.extract_bbox(result)
-            if len(box) > 0:
-                self.vid.plot_rectangle(frame, box)
-
-            keypoints = self.cv_model.extract_keypoints(result)
-            if len(keypoints) > 0:
-                self.vid.plot_keypoints(frame, keypoints)
-
-        return box, keypoints
     
     async def audio_loop(self):
         while self.running:
