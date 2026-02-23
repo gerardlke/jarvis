@@ -38,8 +38,8 @@ class Display:
         x, y = 30, 30
         Display.overlay_text(frame, f"Mode: {state.mode}", (x, y), scale=0.7)
 
-        if state.last_gesture:
-            Display.overlay_text(frame, f"Gesture: {state.last_gesture}", (x, y * 2), scale=0.7)
+        if state.current_gesture:
+            Display.overlay_text(frame, f"Gesture: {state.current_gesture}", (x, y * 2), scale=0.7)
 
             # Draw outer bar
             y = int(y * 2.5)

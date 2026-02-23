@@ -27,7 +27,10 @@ class SpotifyTool(Tool):
 
 TOOLS = {
     "respond": None,
+    "listen": None,
     "google_search": SearchTool(),
     "spotify_play": SpotifyTool(),
     "spotify_pause": SpotifyTool(),
+    "next_window": None,
+    "previous_window": None,
 }

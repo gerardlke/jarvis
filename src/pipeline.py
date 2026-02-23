@@ -43,6 +43,7 @@ class Pipeline:
 
     async def video_loop(self):
         Logger.info("Pipeline", "Video loop started.")
+
         while self.running:
             frame = await asyncio.to_thread(self.vid.read)
 
@@ -71,6 +72,7 @@ class Pipeline:
 
     async def audio_loop(self):
         Logger.info("Pipeline", "Audio loop started.")
+
         while self.running:
             audio = await asyncio.to_thread(self.audio_capture.read)
 
@@ -91,15 +93,23 @@ class Pipeline:
 
     async def action_loop(self):
         Logger.info("Pipeline", "Action loop started.")
+
         while self.running:
-            state = await self.events.get_state()
-            command, gesture = state.last_command, state.last_gesture
+            command = await self.events.get_next_command()
+            gesture = await self.events.get_next_gesture()
 
-            response = await asyncio.to_thread(self.controller.run, (command, gesture))
+            # Only do something if there is a new gesture or command
+            if command:
+                response = await asyncio.to_thread(self.controller.handle_command, command)
+                await self.events.update_response(response)
 
-            await self.events.update_response(response)
+            if gesture:
+                response = await asyncio.to_thread(self.controller.handle_gesture, gesture)
+                await self.events.update_response(response)
 
-            await asyncio.sleep(0)
+            # Actions will take longer so pause longer
+            await asyncio.sleep(0.01)
+
 
     async def run(self):
         await asyncio.gather(

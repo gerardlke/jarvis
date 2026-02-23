@@ -11,12 +11,14 @@ class Controller:
         self.llm = LLM()
         Logger.info("Pipeline", "Controller initialised.")
 
+
     def send_llm_request(self, prompt="", input={}):
         return self.llm.generate(
             system_prompt=prompt,
             user_input=input
         )
     
+
     def generate_action(self, input):
         return self.send_llm_request(
             prompt="""
@@ -36,18 +38,21 @@ If no tool is required, return:
             input=input
         )
     
+
     def generate_response(self, input):
         return self.send_llm_request(
             prompt="You are a helpful assistant. Converse.",
             input=input
         )
     
+
     def fallback_response(self, input):
         return self.send_llm_request(
             prompt="You are a helpful assistant but the user's requested action is not available.",
             input=input
         )
     
+
     def validate_action(self, action):
         try:
             parsed_json = json.loads(action)
@@ -62,8 +67,9 @@ If no tool is required, return:
         except Exception as e:
             Logger.error("Controller", f"Failed to validate {action} due to {e}")
         
+
     def execute_action(self, action):
-        tool = TOOLS.get(action.action)
+        tool = TOOLS.get(action)
         if not tool:
             Logger.error("Controller", f"Tool not found for {action.action}")
             return
@@ -74,17 +80,30 @@ If no tool is required, return:
         except Exception as e:
             Logger.error("Controller", f"Error executing {tool} tool: {e}")
     
-    def run(self, input):
-        Logger.info("Controller", f"Received user input: {input}")
+
+    def handle_command(self, input):
+        Logger.info("Controller", f"Received command: {input}")
 
         action = self.generate_action(input)
         action = self.validate_action(action)
         if not action:
             return self.fallback_response(input)
-        
-        Logger.info("Controller", f"Requested action: {action.action}")
+    
 
         if action.action == "respond":
-            return self.generate_response(input)
+            return self.generate_response(f"User requested command: {input}.")
+
+        return self.execute_action(action.action)
+    
+
+    def handle_gesture(self, input):
+        Logger.info("Controller", f"Received gesture: {input}")
+
+        # TODO: Do some gesture mapping
+        action = "respond"
+
+
+        if action == "respond":
+            return self.generate_response(f"User requested gesture: {input}.")
 
         return self.execute_action(action)
