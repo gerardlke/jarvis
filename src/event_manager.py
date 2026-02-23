@@ -87,7 +87,7 @@ class EventManager:
 
     async def update_response(self, response):
         async with self.lock:
-            Logger.debug("Event Manager", f"New response: {response}")
+            Logger.info("Event Manager", f"New response: {response}")
             self.state.last_response = response
             self.state.response_history.append(response)
             self.state.mode = "IDLE"

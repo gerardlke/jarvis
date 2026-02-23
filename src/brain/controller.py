@@ -7,8 +7,8 @@ from .schemas.tools import TOOLS
 
 
 class Controller:
-    def __init__(self):
-        self.llm = LLM()
+    def __init__(self, model="Qwen/Qwen3-0.6B"):
+        self.llm = LLM(model)
         Logger.info("Pipeline", "Controller initialised.")
 
 
@@ -41,14 +41,22 @@ If no tool is required, return:
 
     def generate_response(self, input):
         return self.send_llm_request(
-            prompt="You are a helpful assistant. Converse.",
+            prompt="""
+You are a smart AI assistant. Converse minimally and directly.
+Do not use emojis. ONLY use words.
+Keey your response under 15 words.
+""",
             input=input
         )
     
 
     def fallback_response(self, input):
         return self.send_llm_request(
-            prompt="You are a helpful assistant but the user's requested action is not available.",
+            prompt="""
+You are a helpful assistant but the user's requested action is not available.
+Do not use emojis. ONLY use words.
+Keey your response under 15 words.
+""",
             input=input
         )
     
@@ -82,7 +90,7 @@ If no tool is required, return:
     
 
     def handle_command(self, input):
-        Logger.info("Controller", f"Received command: {input}")
+        Logger.debug("Controller", f"Received command: {input}")
 
         action = self.generate_action(input)
         action = self.validate_action(action)
@@ -97,13 +105,13 @@ If no tool is required, return:
     
 
     def handle_gesture(self, input):
-        Logger.info("Controller", f"Received gesture: {input}")
+        Logger.debug("Controller", f"Received gesture: {input}")
 
         # TODO: Do some gesture mapping
         action = "respond"
 
 
         if action == "respond":
-            return self.generate_response(f"User requested gesture: {input}.")
+            return self.generate_response(f"User requested action based off gesture: {input}.")
 
         return self.execute_action(action)

@@ -1,4 +1,6 @@
+import os
 import asyncio
+from dotenv import load_dotenv
 
 from .video.display import Display
 from .video.gesture import Gesture
@@ -16,6 +18,8 @@ from .brain.controller import Controller
 from .event_manager import EventManager
 
 
+load_dotenv()
+
 class Pipeline:
     Logger.setup()
 
@@ -24,8 +28,8 @@ class Pipeline:
         # Start video capture tools
         self.vid = VideoCapture()
         self.display = Display(self.vid.frame_width, self.vid.frame_height)
-        self.cv_model = CVModel(r"models\runs\pose\hand-keypoints\weights\best.pt")
-        self.gesture = Gesture(r"models\runs\knn\knn.joblib", r"models\runs\knn\scaler.joblib")
+        self.cv_model = CVModel(os.getenv("CV_MODEL"))
+        self.gesture = Gesture(os.getenv("KNN_MODEL"), os.getenv("KNN_SCALER"))
 
         # Start audio capture tools
         self.audio_capture = AudioCapture()
@@ -35,7 +39,7 @@ class Pipeline:
 
         # Start main controllers
         self.events = EventManager()
-        self.controller = Controller()
+        self.controller = Controller(os.getenv("LLM_MODEL"))
 
         self.running = True
         Logger.info("Pipeline", "Pipeline started.")

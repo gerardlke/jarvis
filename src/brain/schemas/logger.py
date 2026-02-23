@@ -9,7 +9,7 @@ class Logger:
         if not cls.logger:
             # Create formatter
             formatter = logging.Formatter(
-                fmt="%(asctime)s | %(levelname)-8s | %(name)s: %(message)s",
+                fmt="%(asctime)s | %(levelname)-8s | %(name)s %(message)s",
                 datefmt="%H:%M:%S"
             )
 
@@ -32,19 +32,19 @@ class Logger:
     @classmethod
     def info(cls, sender, message):
         if cls.logger:
-            cls.logger.info(f"[{sender}]: {message}")
+            cls.logger.info(f"[{sender}] {message}")
 
     @classmethod
     def debug(cls, sender, message):
         if cls.logger:
-            cls.logger.debug(f"[{sender}]: {message}")
+            cls.logger.debug(f"[{sender}] {message}")
 
     @classmethod
     def error(cls, sender, message):
         if cls.logger:
-            cls.logger.error(f"[{sender}]: {message}")
+            cls.logger.error(f"[{sender}] {message}")
 
     @classmethod
     def warning(cls, sender, message):
         if cls.logger:
-            cls.logger.warning(f"[{sender}]: {message}")
+            cls.logger.warning(f"[{sender}] {message}")

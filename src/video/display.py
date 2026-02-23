@@ -8,6 +8,7 @@ class Display:
     TEXT_COLOR = (220, 220, 220)
     FONT = cv2.FONT_HERSHEY_SIMPLEX
 
+
     def __init__(self, width, height):
         self.width = width
         self.height = height
@@ -16,6 +17,7 @@ class Display:
         self.plot_bboxes = False
         self.plot_keypoints = True
     
+
     def render(self, frame, state, results=[]):
         # Plot bbox and keypoints
         for result in results:
@@ -54,11 +56,24 @@ class Display:
                 Display.plot_rectangle(frame, (x, y, x + bar_width, y + max_height), thickness=-1)
                 Display.overlay_text(frame, f"{int(conf * 100)}%", (x, y + max_height), scale=0.5)
     
+    
     def draw_transcript(self, frame, state):
+        max_width = int(self.width * 0.7)
+        max_height = 75
+        Display.plot_panel(frame, 0, self.height - max_height, self.width, max_height)
+
         if state.last_command:
-            text = f'"{state.last_command}"'
-            text_size = cv2.getTextSize(text, Display.FONT, 0.8, 2)[0]
-            Display.overlay_text(frame, text, ((self.width - text_size[0]) // 2, self.height - 40), scale=0.8)
+            scale = 0.8
+            wrapped_text = Display.wrap_text(f'"{state.last_command}"', Display.FONT, scale, 2, max_width)
+            text_size = cv2.getTextSize(wrapped_text, Display.FONT, 0.8, 2)[0]
+            Display.overlay_text(frame, wrapped_text, ((self.width - text_size[0]) // 2, self.height - 45), scale=scale)
+
+        if state.last_response:
+            scale = 0.6
+            wrapped_text = Display.wrap_text(f'"{state.last_response}"', Display.FONT, scale, 2, max_width)
+            text_size = cv2.getTextSize(wrapped_text, Display.FONT, 0.8, 2)[0]
+            Display.overlay_text(frame, wrapped_text, ((self.width - text_size[0]) // 2, self.height - 15), scale=scale)
+
 
     def draw_keypoints(frame, keypoints):
         connections = [
@@ -79,6 +94,12 @@ class Display:
 
     # Helper functions
 
+    def plot_panel(frame, x, y, w, h, alpha=0.5):
+        overlay = frame.copy()
+        cv2.rectangle(overlay, (x, y), (x + w, y + h), (0, 0, 0), -1)
+        cv2.addWeighted(overlay, alpha, frame, 1 - alpha, 0, frame)
+
+
     def plot_rectangle(frame, xyxy, thickness=1):
         cv2.rectangle(
             frame,
@@ -88,6 +109,7 @@ class Display:
             thickness
         )
     
+
     def plot_circle(frame, xy, radius=3):
         radius += int(radius * np.sin(time.time() * radius))
         cv2.circle(
@@ -98,6 +120,7 @@ class Display:
             2
         )
 
+
     def plot_line(frame, xy1, xy2, width=1):
         cv2.line(
             frame,
@@ -107,6 +130,7 @@ class Display:
             width
         )
     
+
     def overlay_text(frame, text, location=(0, 0), scale=1):
         cv2.putText(
             frame,
@@ -118,3 +142,24 @@ class Display:
             1, 
             cv2.LINE_AA
         )
+
+    
+    def wrap_text(text, font, scale, thickness, max_width):
+        words = text.split(" ")
+        lines = []
+        current_line = ""
+
+        for word in words:
+            test_line = f"{current_line} {word}".strip()
+            text_size = cv2.getTextSize(test_line, font, scale, thickness)[0]
+
+            if text_size[0] <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = word
+
+        if current_line:
+            lines.append(current_line)
+
+        return "\n".join(lines)
