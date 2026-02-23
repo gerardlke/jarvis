@@ -1,0 +1,31 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.5.2 Chrome/142.0.7444.265 Electron/39.6.1 Safari/537.36" version="29.5.2">
+  <diagram name="Page-1" id="lq6jw8w8UQHv6VdPLbNa">
+    <mxGraphModel dx="786" dy="516" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-5" connectable="0" parent="1" style="group" value="" vertex="1">
+          <mxGeometry height="280" width="360" x="160" y="120" as="geometry" />
+        </mxCell>
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-1" parent="vxX_IDtBw8WDWu6m8ja5-5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="280" width="360" as="geometry" />
+        </mxCell>
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-3" parent="vxX_IDtBw8WDWu6m8ja5-5" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Pipeline" vertex="1">
+          <mxGeometry height="30" width="60" as="geometry" />
+        </mxCell>
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-6" parent="vxX_IDtBw8WDWu6m8ja5-5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="200" width="120" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-12" parent="vxX_IDtBw8WDWu6m8ja5-5" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Video" vertex="1">
+          <mxGeometry height="30" width="60" x="40" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-13" parent="vxX_IDtBw8WDWu6m8ja5-5" style="rounded=0;whiteSpace=wrap;html=1;fillColor=none;" value="" vertex="1">
+          <mxGeometry height="200" width="120" x="200" y="40" as="geometry" />
+        </mxCell>
+        <mxCell id="vxX_IDtBw8WDWu6m8ja5-14" parent="vxX_IDtBw8WDWu6m8ja5-5" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="Audio" vertex="1">
+          <mxGeometry height="30" width="60" x="200" y="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
