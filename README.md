@@ -6,6 +6,8 @@ This is a personal project using computer vision techniques, speech recognition 
 
 But instead of copying a demo, I wanted to be able to gloat that I built one on my own.
 
+No external APIs. No vibe coding.
+
 ---
 
 ### The goal?
